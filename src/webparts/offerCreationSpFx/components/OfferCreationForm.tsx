@@ -2,7 +2,6 @@ import * as React from "react";
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { DatePicker } from '@fluentui/react/lib/DatePicker';
 import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { Label } from '@fluentui/react/lib/Label';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { useState, useCallback } from "react";
 import { IOfferCreationFormProps } from "./IOfferCreationFormProps";
@@ -61,8 +60,7 @@ export const OfferCreationForm = (props: IOfferCreationFormProps) => {
                 }} />          
       </div>
       <div>
-        <Label>Offer Date</Label>
-        <DatePicker onSelectDate={onOfferingDateChange} />
+        <DatePicker label="Offer Date" onSelectDate={onOfferingDateChange} />
       </div>
       <div>        
         <TextField label="Price" 
@@ -89,7 +87,6 @@ export const OfferCreationForm = (props: IOfferCreationFormProps) => {
         />
       </div>
       <div>
-        <Label></Label>
         <TextField label="Description" 
                     multiline rows={3} 
                     resizable 

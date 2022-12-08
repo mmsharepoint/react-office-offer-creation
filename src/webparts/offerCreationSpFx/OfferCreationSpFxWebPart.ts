@@ -17,55 +17,54 @@ export interface IOfferCreationSpFxWebPartProps {
 }
 
 export default class OfferCreationSpFxWebPart extends BaseClientSideWebPart<IOfferCreationSpFxWebPartProps> {
-
   private _isDarkTheme: boolean = false;
-  private _environmentMessage: string = '';
+  private teamSiteDomain: string = '';
 
-  public render(): void {
+  public render(): void {  
     const element: React.ReactElement<IOfferCreationSpFxProps> = React.createElement(
       OfferCreationSpFx,
       {
         siteUrl: this.properties.siteUrl,
-        siteDomain: 'mmoellermvp.sharepoint.com', // ToDo: teamsContext
+        siteDomain: 'mmoellermvp.sharepoint.com',
         serviceScope: this.context.serviceScope,
         isDarkTheme: this._isDarkTheme,
-        environmentMessage: this._environmentMessage,
+        teamSiteDomain: this.teamSiteDomain,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
         userDisplayName: this.context.pageContext.user.displayName
       }
     );
-
+    console.log(`Render: ${this.teamSiteDomain}`);
     ReactDom.render(element, this.domElement);
   }
 
   protected onInit(): Promise<void> {
-    return this._getEnvironmentMessage().then(message => {
-      this._environmentMessage = message;
+    return this.getTeamSiteDomain().then(domain => {
+      this.teamSiteDomain = domain;
+      console.log(domain);
     });
   }
 
 
 
-  private _getEnvironmentMessage(): Promise<string> {
+  private getTeamSiteDomain(): Promise<string> {
     if (!!this.context.sdks.microsoftTeams) { // running in Teams, office.com or Outlook
       return this.context.sdks.microsoftTeams.teamsJs.app.getContext()
         .then(context => {
-          let environmentMessage: string = '';
-          switch (context.app.host.name) {
-            case 'Office': // running in Office
-              environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOffice : strings.AppOfficeEnvironment;
-              break;
-            case 'Outlook': // running in Outlook
-              environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOutlook : strings.AppOutlookEnvironment;
-              break;
-            case 'Teams': // running in Teams
-              environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentTeams : strings.AppTeamsTabEnvironment;
-              break;
-            default:
-              throw new Error('Unknown host');
-          }
-
-          return environmentMessage;
+          // let environmentMessage: string = '';
+          // switch (context.app.host.name) {
+          //   case 'Office': // running in Office
+          //     environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOffice : strings.AppOfficeEnvironment;
+          //     break;
+          //   case 'Outlook': // running in Outlook
+          //     environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOutlook : strings.AppOutlookEnvironment;
+          //     break;
+          //   case 'Teams': // running in Teams
+          //     environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentTeams : strings.AppTeamsTabEnvironment;
+          //     break;
+          //   default:
+          //     throw new Error('Unknown host');
+          // }          
+          return context.sharePointSite.teamSiteDomain;
         });
     }
 

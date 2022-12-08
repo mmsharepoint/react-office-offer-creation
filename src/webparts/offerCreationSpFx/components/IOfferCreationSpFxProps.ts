@@ -5,7 +5,7 @@ export interface IOfferCreationSpFxProps {
   siteDomain: string;
   serviceScope: ServiceScope;
   isDarkTheme: boolean;
-  environmentMessage: string;
+  teamSiteDomain: string;
   hasTeamsContext: boolean;
   userDisplayName: string;
 }

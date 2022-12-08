@@ -15,8 +15,7 @@ export class SPService implements ISPService {
   private teamSiteDomain: string;
   private teamSiteRelativeUrl: string;
 
-  constructor(serviceScope: ServiceScope) {
-    
+  constructor(serviceScope: ServiceScope) {  
     serviceScope.whenFinished(() => {
       this._spHttpClient = serviceScope.consume(SPHttpClient.serviceKey);        
     });
@@ -30,9 +29,8 @@ export class SPService implements ISPService {
     const newFile = await this.createOfferFile(tmplFile);
     const newFileUrl = this.teamSiteUrl + newFile.ServerRelativeUrl;
     const fileListItemInfo = await this.getFileListItem(tmplFile.name);    
-    const fileListItem = await this.updateFileListItem(fileListItemInfo.id, fileListItemInfo.type, offer);
-    console.log(fileListItem);
-    return Promise.resolve({ item: null, fileUrl: newFileUrl });
+    await this.updateFileListItem(fileListItemInfo.id, fileListItemInfo.type, offer);
+    return Promise.resolve({ item: fileListItemInfo, fileUrl: newFileUrl });
   }
 
   private async loadTemplate (offer: IOffer): Promise<any> {
@@ -46,7 +44,7 @@ export class SPService implements ISPService {
   private async createOfferFile(tmplFile: any): Promise<any> {
     const uploadUrl = `${this.teamSiteUrl}/_api/web/GetFolderByServerRelativeUrl('${this.teamSiteRelativeUrl}/Shared Documents')/files/add(overwrite=true,url='${tmplFile.name}')` ;
 
-    let spOpts : ISPHttpClientOptions  = {
+    const spOpts : ISPHttpClientOptions  = {
       headers: {
         "Accept": "application/json",
         "Content-Length": tmplFile.size,
@@ -63,15 +61,16 @@ export class SPService implements ISPService {
     const response = await this._spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
     const jsonResp = await response.json();
     const itemID = jsonResp.ID;
-    return { id: itemID, type: jsonResp["@odata.type"] }; // ToDo: ServerRedirectedEmbedUri  
+    return { id: itemID, type: jsonResp["@odata.type"].replace('#', '') }; // ToDo: ServerRedirectedEmbedUri  
   }
 
   private async updateFileListItem(itemID: string, itemType: string, offer: IOffer): Promise<any> {
     const requestUrl = `${this.teamSiteUrl}/_api/web/lists/GetByTitle('Documents')/items(${itemID})`;
-    let spOpts : ISPHttpClientOptions  = {
+    const spOpts : ISPHttpClientOptions  = {
       headers: {
         "Content-Type": "application/json;odata=verbose",
         "Accept": "application/json;odata=verbose",
+        "odata-version": "3.0",
         "If-Match": "*",
         "X-HTTP-Method": "MERGE"
       },
@@ -87,7 +86,12 @@ export class SPService implements ISPService {
       })
     };
     const response = await this._spHttpClient.post(requestUrl, SPHttpClient.configurations.v1, spOpts);
-    return response.json();
+    if (response.status === 204) {
+      return Promise.resolve();
+    }
+    else {
+      return Promise.reject();
+    }    
   }
 }
 

@@ -15,17 +15,13 @@ export const OfferCreationSpFx: React.FC<IOfferCreationSpFxProps> = (props) => {
 
   const createOffer = (offer: IOffer) => {
     setShowSpinner(true);
-      // const requestBody = {
-      //   domain: context?.sharePointSite?.teamSiteId,
-      //   offer: offer
-      // };
     const _customSPServiceInstance = props.serviceScope.consume(SPService.serviceKey);
 
-    _customSPServiceInstance.createOffer(offer, props.siteUrl, props.siteDomain).then((web: JSON) => {
-      console.log(web);
+    _customSPServiceInstance.createOffer(offer, props.siteUrl, props.siteDomain).then((resp: any) => {
+      console.log(resp);
       setOfferCreated(true);
       setShowSpinner(false);
-      setOfferFileUrl("https://"); // ToDo
+      setOfferFileUrl(resp.fileUrl);
     })
     .catch((error) => {
         console.log(error);
