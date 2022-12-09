@@ -27,7 +27,7 @@ export class SPService implements ISPService {
     this.teamSiteRelativeUrl = this.teamSiteUrl.split(this.teamSiteDomain)[1];
     const tmplFile = await this.loadTemplate(offer);
     const newFile = await this.createOfferFile(tmplFile);
-    const newFileUrl = this.teamSiteUrl + newFile.ServerRelativeUrl;
+    const newFileUrl = `https://${this.teamSiteDomain}${newFile.ServerRelativeUrl}`;
     const fileListItemInfo = await this.getFileListItem(tmplFile.name);    
     await this.updateFileListItem(fileListItemInfo.id, fileListItemInfo.type, offer);
     return Promise.resolve({ item: fileListItemInfo, fileUrl: newFileUrl });
@@ -53,7 +53,8 @@ export class SPService implements ISPService {
       body: tmplFile.data        
     };
     const response = await this._spHttpClient.post(uploadUrl, SPHttpClient.configurations.v1, spOpts);
-    return response;
+    const jsonResp = await response.json();
+    return jsonResp;
   }
 
   private async getFileListItem(fileName: string): Promise<any> {

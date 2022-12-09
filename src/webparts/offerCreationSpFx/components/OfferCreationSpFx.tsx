@@ -13,11 +13,11 @@ export const OfferCreationSpFx: React.FC<IOfferCreationSpFxProps> = (props) => {
   const [offerFileUrl, setOfferFileUrl] = useState<string>("");
   const [showSpinner, setShowSpinner] = useState<boolean>(false);
 
-  const createOffer = (offer: IOffer) => {
+  const createOffer = (offer: IOffer): void => {
     setShowSpinner(true);
     const _customSPServiceInstance = props.serviceScope.consume(SPService.serviceKey);
 
-    _customSPServiceInstance.createOffer(offer, props.siteUrl, props.siteDomain).then((resp: any) => {
+    _customSPServiceInstance.createOffer(offer, props.siteUrl, props.teamSiteDomain).then((resp: any) => {
       console.log(resp);
       setOfferCreated(true);
       setShowSpinner(false);
@@ -27,22 +27,6 @@ export const OfferCreationSpFx: React.FC<IOfferCreationSpFxProps> = (props) => {
         console.log(error);
         setShowSpinner(false);
     });
-      // Axios.post(`https://${process.env.PUBLIC_HOSTNAME}/api/createoffer`, requestBody, {
-      //             responseType: "json",
-      //             headers: {
-      //               Authorization: `Bearer ${idToken}`
-      //             }
-      // }).then(result => {
-      //   if (result.data.fileUrl) {
-      //     setOfferCreated(true);
-      //   }     
-      // })
-      // .catch((error) => {
-      //   console.log(error);
-      // })
-      // .finally(() => {
-      //   setShowSpinner(false);
-      // });
   };
 
   return (
@@ -50,7 +34,7 @@ export const OfferCreationSpFx: React.FC<IOfferCreationSpFxProps> = (props) => {
       <h2>Offer creation</h2>
       <OfferCreationForm offerCreated={offerCreated} createOffer={createOffer} />
       <div>{showSpinner && <Spinner label="Creating document" size={SpinnerSize.large} />}</div>
-      <div>{offerCreated && <span><Label>Your offer document is created and can be found </Label><a href={offerFileUrl}>here</a></span>}</div>
+      <div>{offerCreated && <Label>Your offer document is created and can be found <a href={offerFileUrl}>here</a></Label>}</div>
     </section>
   );
 }

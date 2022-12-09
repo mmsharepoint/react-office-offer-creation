@@ -25,7 +25,6 @@ export default class OfferCreationSpFxWebPart extends BaseClientSideWebPart<IOff
       OfferCreationSpFx,
       {
         siteUrl: this.properties.siteUrl,
-        siteDomain: 'mmoellermvp.sharepoint.com',
         serviceScope: this.context.serviceScope,
         isDarkTheme: this._isDarkTheme,
         teamSiteDomain: this.teamSiteDomain,
@@ -67,8 +66,8 @@ export default class OfferCreationSpFxWebPart extends BaseClientSideWebPart<IOff
           return context.sharePointSite.teamSiteDomain;
         });
     }
-
-    return Promise.resolve(this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentSharePoint : strings.AppSharePointEnvironment);
+    const uri = new URL(this.context.pageContext.site.absoluteUrl);
+    return Promise.resolve(uri.host);
   }
 
   protected onThemeChanged(currentTheme: IReadonlyTheme | undefined): void {

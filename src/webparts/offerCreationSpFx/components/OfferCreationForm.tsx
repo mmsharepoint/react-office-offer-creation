@@ -1,4 +1,5 @@
 import * as React from "react";
+import styles from './OfferCreationForm.module.scss';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { DatePicker } from '@fluentui/react/lib/DatePicker';
 import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
@@ -7,9 +8,9 @@ import { useState, useCallback } from "react";
 import { IOfferCreationFormProps } from "./IOfferCreationFormProps";
 import { IOffer } from "../../../model/IOffer";
 
-export const OfferCreationForm = (props: IOfferCreationFormProps) => {
+export const OfferCreationForm: React.FC<IOfferCreationFormProps> = (props) => {
   const [title, setTitle] = useState<string>();
-  const [date, setDate] = useState<string>();
+  const [date, setDate] = useState<Date>();
   const [price, setPrice] = useState<string>();
   const [vat, setVAT] = useState<number>();
   const [selectedItem, setSelectedItem] = useState<IDropdownOption>();
@@ -20,11 +21,11 @@ export const OfferCreationForm = (props: IOfferCreationFormProps) => {
     { key: '7', text: '7% (reduced)' }
   ];
 
-  const onOfferingDateChange = (date: Date) => {
-    setDate(date.toISOString());
+  const onOfferingDateChange = (date: Date): void => {
+    setDate(date);
   };
 
-  const onOfferingVATChange = (e: React.FormEvent<HTMLDivElement>, selectedOption: IDropdownOption) => {
+  const onOfferingVATChange = (e: React.FormEvent<HTMLDivElement>, selectedOption: IDropdownOption): void => {
     setSelectedItem(selectedOption);
     switch (selectedOption.key) {
       case "19":
@@ -40,7 +41,7 @@ export const OfferCreationForm = (props: IOfferCreationFormProps) => {
     const newOffer: IOffer = {
       title: title ? title : '',
       description: description ? description : '',
-      date: date ? date : '',
+      date: date ? date.toISOString() : '',
       price: price ? parseFloat(price) : 0,
       vat: vat ? vat : 0
     };
@@ -48,7 +49,7 @@ export const OfferCreationForm = (props: IOfferCreationFormProps) => {
   }, [title, description, date, price,vat]);
 
   return (
-    <div>
+    <div className={styles.offerCreationForm}>
       <div>
         <TextField label="Title" 
                 value={title}
@@ -60,7 +61,7 @@ export const OfferCreationForm = (props: IOfferCreationFormProps) => {
                 }} />          
       </div>
       <div>
-        <DatePicker label="Offer Date" onSelectDate={onOfferingDateChange} />
+        <DatePicker label="Offer Date" value={date} onSelectDate={onOfferingDateChange} />
       </div>
       <div>        
         <TextField label="Price" 
@@ -97,7 +98,7 @@ export const OfferCreationForm = (props: IOfferCreationFormProps) => {
                       }
                     }} />
       </div>
-      <div>
+      <div className={styles.formButton}>
         <PrimaryButton text="Create Offer" onClick={storeData} allowDisabledFocus />
       </div>
     </div>
