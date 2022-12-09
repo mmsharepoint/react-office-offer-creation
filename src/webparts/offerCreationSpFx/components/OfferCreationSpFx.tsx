@@ -17,7 +17,7 @@ export const OfferCreationSpFx: React.FC<IOfferCreationSpFxProps> = (props) => {
     setShowSpinner(true);
     const _customSPServiceInstance = props.serviceScope.consume(SPService.serviceKey);
 
-    _customSPServiceInstance.createOffer(offer, props.siteUrl, props.teamSiteDomain).then((resp: any) => {
+    _customSPServiceInstance.createOffer(offer, props.teamSiteDomain).then((resp: any) => {
       console.log(resp);
       setOfferCreated(true);
       setShowSpinner(false);

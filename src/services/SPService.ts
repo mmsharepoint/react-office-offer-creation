@@ -21,16 +21,34 @@ export class SPService implements ISPService {
     });
   }
 
-  public async createOffer(offer: IOffer, siteUrl: string, siteDomain: string): Promise<any> {
-    this.teamSiteUrl = siteUrl;
-    this.teamSiteDomain = siteDomain;
-    this.teamSiteRelativeUrl = this.teamSiteUrl.split(this.teamSiteDomain)[1];
-    const tmplFile = await this.loadTemplate(offer);
-    const newFile = await this.createOfferFile(tmplFile);
-    const newFileUrl = `https://${this.teamSiteDomain}${newFile.ServerRelativeUrl}`;
-    const fileListItemInfo = await this.getFileListItem(tmplFile.name);    
-    await this.updateFileListItem(fileListItemInfo.id, fileListItemInfo.type, offer);
-    return Promise.resolve({ item: fileListItemInfo, fileUrl: newFileUrl });
+  public async createOffer(offer: IOffer, siteDomain: string): Promise<any> {
+    this.teamSiteUrl = await this.getSiteUrl(`https://${siteDomain}`);
+    if (this.teamSiteUrl !== "") {
+      this.teamSiteDomain = siteDomain;
+      this.teamSiteRelativeUrl = this.teamSiteUrl.split(this.teamSiteDomain)[1];
+      const tmplFile = await this.loadTemplate(offer);
+      const newFile = await this.createOfferFile(tmplFile);
+      const newFileUrl = `https://${this.teamSiteDomain}${newFile.ServerRelativeUrl}`;
+      const fileListItemInfo = await this.getFileListItem(tmplFile.name);    
+      await this.updateFileListItem(fileListItemInfo.id, fileListItemInfo.type, offer);
+      return Promise.resolve({ item: fileListItemInfo, fileUrl: newFileUrl });
+    }
+    return Promise.reject();
+  }
+
+  private async getSiteUrl(tenantUrl: string): Promise<string> {
+    const requestUrl: string = `${tenantUrl}/_api/SP_TenantSettings_Current`;
+    const response = await this._spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
+    const jsonResp = await response.json();
+    const appCatalogUrl: string = jsonResp.CorporateCatalogUrl;
+    if (appCatalogUrl && appCatalogUrl.length > 8) {
+      const apprequestUrl: string = `${appCatalogUrl}/_api/web/GetStorageEntity('CreateOfferSiteUrl')`;
+      const appResponse = await this._spHttpClient.get(apprequestUrl, SPHttpClient.configurations.v1);
+      const jsonAppResp = await appResponse.json();
+      const siteUrl: string = jsonAppResp.Value;
+      return siteUrl
+    }
+    return "";
   }
 
   private async loadTemplate (offer: IOffer): Promise<any> {

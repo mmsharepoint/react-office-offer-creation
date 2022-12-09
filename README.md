@@ -2,7 +2,11 @@
 
 ## Summary
 
-This sample is a Teams personal Tab to act as a Microsoft 365 across application (Teams, Outlook, Office) including a search-based messaging extension to act in Teams and Outlook. It is realised with SharePoint Framework (SPFx).
+This sample is a Teams personal Tab to act as a Microsoft 365 across application (Teams, Outlook, Office) including a search-based messaging extension to act in Teams and Outlook. It is realized with SharePoint Framework (SPFx).
+
+App live in action inside Teams
+
+![App live in action inside Teams](assets/16OfferCreationDemo_SPFx.gif)
 
 ## Used SharePoint Framework Version
 
@@ -45,7 +49,7 @@ Version|Date|Author|Comments
         ```bash
         .\templates\deploy.ps1 -siteUrl <YourFullSiteUrl>
     
-    - Put the same site url to your config as SiteUrl=
+    - This should put the same site url to your tenant-property named 'CreateOfferSiteUrl'
 
 
 ## Features
@@ -53,6 +57,7 @@ Version|Date|Author|Comments
 * Using SharePoint Rest API to copy files and edit it's metadata
 * [Extend Teams SPFx apps across Microsoft 365](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/office/overview?WT.mc_id=M365-MVP-5004617)
 * [Use FluentUI Label, DatePicker, Dropdown, IDropdownOption, Spinner, TextField](https://developer.microsoft.com/en-us/fluentui#/?WT.mc_id=M365-MVP-5004617)
+* [Use SharePoint tenant properties for org-wide SPFx app configurations](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/tenant-properties?tabs=sprest#getread-tenant-properties?WT.mc_id=M365-MVP-5004617)
 
 ## References
 
