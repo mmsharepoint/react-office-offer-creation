@@ -21,11 +21,11 @@ export const OfferCreationForm: React.FC<IOfferCreationFormProps> = (props) => {
     { key: '7', text: '7% (reduced)' }
   ];
 
-  const onOfferingDateChange = (date: Date): void => {
+  const onOfferingDateChange = useCallback((date: Date): void => {
     setDate(date);
-  };
+  }, []);
 
-  const onOfferingVATChange = (e: React.FormEvent<HTMLDivElement>, selectedOption: IDropdownOption): void => {
+  const onOfferingVATChange = useCallback((e: React.FormEvent<HTMLDivElement>, selectedOption: IDropdownOption): void => {
     setSelectedItem(selectedOption);
     switch (selectedOption.key) {
       case "19":
@@ -35,7 +35,7 @@ export const OfferCreationForm: React.FC<IOfferCreationFormProps> = (props) => {
         setVAT(0.07);
         break;
     }
-  };
+  }, []);
 
   const storeData = useCallback(() => {
     const newOffer: IOffer = {
