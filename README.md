@@ -8,6 +8,10 @@ App live in action inside Teams
 
 ![App live in action inside Teams](assets/16OfferCreationDemo_SPFx.gif)
 
+Create Offer form with FluentUI controls
+
+![Create Offer form with FluentUI controls](assets/15CreateOfferForm_FluentUI_SPFx.png)
+
 ## Used SharePoint Framework Version
 
 ![version](https://img.shields.io/badge/version-1.16.1-green.svg)
