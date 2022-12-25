@@ -17,8 +17,37 @@ export class SPService implements ISPService {
 
   constructor(serviceScope: ServiceScope) {  
     serviceScope.whenFinished(() => {
-      this._spHttpClient = serviceScope.consume(SPHttpClient.serviceKey);        
+      this._spHttpClient = serviceScope.consume(SPHttpClient.serviceKey);
     });
+  }
+
+  public async getPersonalSiteUrl(mySiteUrl: string, userLogin: string): Promise<string> {
+    const userLoginEnc = userLogin.replace('.', '_').replace('@', '_'); // user_tenant_onmicrosoft_com
+    const requestUrl: string = `https://${mySiteUrl}/personal/${userLoginEnc}/_api/v2.0/drive/special/approot:/config.json:/content`;
+    const response = await this._spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
+    const jsonResp = await response.json();
+    const siteUrl: string = jsonResp.Value.siteUrl;
+    return siteUrl;
+  }
+
+  public async storePersonalSiteUrl(mySiteUrl: string, userLogin: string, siteUrl: string): Promise<any> {
+    const userLoginEnc = userLogin.replaceAll('.', '_').replace('@', '_'); // user_tenant_onmicrosoft_com
+    const requestUrl: string = `https://${mySiteUrl}/personal/${userLoginEnc}/_api/v2.0/drive/special/approot:/config.json:/content`;
+    const spOpts : ISPHttpClientOptions  = {
+      headers: {
+        "Content-Type": "text/plain"
+      },
+      body: JSON.stringify({
+        "siteUrl": siteUrl
+      })
+    };
+    const response = await this._spHttpClient.post(requestUrl, SPHttpClient.configurations.v1, spOpts);
+    if (response.status === 204) {
+      return Promise.resolve();
+    }
+    else {
+      return Promise.reject();
+    }
   }
 
   public async createOffer(offer: IOffer, siteDomain: string): Promise<any> {
@@ -46,7 +75,7 @@ export class SPService implements ISPService {
       const appResponse = await this._spHttpClient.get(apprequestUrl, SPHttpClient.configurations.v1);
       const jsonAppResp = await appResponse.json();
       const siteUrl: string = jsonAppResp.Value;
-      return siteUrl
+      return siteUrl;
     }
     return "";
   }
@@ -110,7 +139,7 @@ export class SPService implements ISPService {
     }
     else {
       return Promise.reject();
-    }    
+    }
   }
 }
 

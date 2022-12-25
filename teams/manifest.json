@@ -32,7 +32,16 @@
         "scopes": [
           "personal"
         ]
+      },
+      {
+        "entityId": "cae9f67e-64d1-42ce-9cc7-69b0c9efcfb4",
+        "name": "Settings",
+        "contentUrl": "https://{teamSiteDomain}/_layouts/15/TeamsLogon.aspx?SPFX=true&dest=/_layouts/15/teamshostedapp.aspx%3Fteams%26personal%26componentId=ceead84d-216c-4bb1-8f33-7b838c46b2e1%26forceLocale={locale}",
+        "scopes": [
+          "personal"
+        ]
       }
+
     ],
     "bots": [],
     "connectors": [],

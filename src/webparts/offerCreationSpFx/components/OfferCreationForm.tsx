@@ -58,7 +58,7 @@ export const OfferCreationForm: React.FC<IOfferCreationFormProps> = (props) => {
                   if (data) {
                       setTitle(data);
                   }
-                }} />          
+                }} />
       </div>
       <div>
         <DatePicker label="Offer Date" value={date} onSelectDate={onOfferingDateChange} />

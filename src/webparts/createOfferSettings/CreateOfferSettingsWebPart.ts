@@ -8,52 +8,68 @@ import {
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
-import * as strings from 'OfferCreationSpFxWebPartStrings';
-import { OfferCreationSpFx } from './components/OfferCreationSpFx';
-import { IOfferCreationSpFxProps } from './components/IOfferCreationSpFxProps';
+import * as strings from 'CreateOfferSettingsWebPartStrings';
+import { CreateOfferSettings } from './components/CreateOfferSettings';
+import { ICreateOfferSettingsProps } from './components/ICreateOfferSettingsProps';
 
-export interface IOfferCreationSpFxWebPartProps {
-  siteUrl: string;
+export interface ICreateOfferSettingsWebPartProps {
+  description: string;
 }
 
-export default class OfferCreationSpFxWebPart extends BaseClientSideWebPart<IOfferCreationSpFxWebPartProps> {
-  private _isDarkTheme: boolean = false;
-  private teamSiteDomain: string = '';
+export default class CreateOfferSettingsWebPart extends BaseClientSideWebPart<ICreateOfferSettingsWebPartProps> {
 
-  public render(): void {  
-    const element: React.ReactElement<IOfferCreationSpFxProps> = React.createElement(
-      OfferCreationSpFx,
+  private _isDarkTheme: boolean = false;
+  private _environmentMessage: string = '';
+
+  public render(): void {
+    const element: React.ReactElement<ICreateOfferSettingsProps> = React.createElement(
+      CreateOfferSettings,
       {
-        siteUrl: this.properties.siteUrl,
         serviceScope: this.context.serviceScope,
+        httpClient: this.context.httpClient,
         isDarkTheme: this._isDarkTheme,
-        teamSiteDomain: this.teamSiteDomain,
+        environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
-        userDisplayName: this.context.pageContext.user.displayName
+        mySiteUrl: 'mmoellermvp-my.sharepoint.com',
+        userLogin: this.context.pageContext.user.loginName
       }
     );
+
     ReactDom.render(element, this.domElement);
   }
 
   protected onInit(): Promise<void> {
-    return this.getTeamSiteDomain().then(domain => {
-      this.teamSiteDomain = domain;
-      console.log(domain);
+    return this._getEnvironmentMessage().then(message => {
+      this._environmentMessage = message;
     });
   }
 
-  private getTeamSiteDomain(): Promise<string> {
+
+
+  private _getEnvironmentMessage(): Promise<string> {
     if (!!this.context.sdks.microsoftTeams) { // running in Teams, office.com or Outlook
       return this.context.sdks.microsoftTeams.teamsJs.app.getContext()
         .then(context => {
-          return context.sharePointSite.teamSiteDomain;
+          let environmentMessage: string = '';
+          switch (context.app.host.name) {
+            case 'Office': // running in Office
+              environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOffice : strings.AppOfficeEnvironment;
+              break;
+            case 'Outlook': // running in Outlook
+              environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOutlook : strings.AppOutlookEnvironment;
+              break;
+            case 'Teams': // running in Teams
+              environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentTeams : strings.AppTeamsTabEnvironment;
+              break;
+            default:
+              throw new Error('Unknown host');
+          }
+
+          return environmentMessage;
         });
     }
-    else { // Running in SharePoint
 
-    }
-    const uri = new URL(this.context.pageContext.site.absoluteUrl);
-    return Promise.resolve(uri.host);
+    return Promise.resolve(this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentSharePoint : strings.AppSharePointEnvironment);
   }
 
   protected onThemeChanged(currentTheme: IReadonlyTheme | undefined): void {
@@ -93,7 +109,7 @@ export default class OfferCreationSpFxWebPart extends BaseClientSideWebPart<IOff
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('siteUrl', {
+                PropertyPaneTextField('description', {
                   label: strings.DescriptionFieldLabel
                 })
               ]

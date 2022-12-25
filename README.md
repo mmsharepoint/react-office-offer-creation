@@ -62,6 +62,7 @@ Version|Date|Author|Comments
 * [Extend Teams SPFx apps across Microsoft 365](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/office/overview?WT.mc_id=M365-MVP-5004617)
 * [Use FluentUI Label, DatePicker, Dropdown, IDropdownOption, Spinner, TextField](https://developer.microsoft.com/en-us/fluentui#/?WT.mc_id=M365-MVP-5004617)
 * [Use SharePoint tenant properties for org-wide SPFx app configurations](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/tenant-properties?tabs=sprest#getread-tenant-properties?WT.mc_id=M365-MVP-5004617)
+* [Configure Microsoft Teams personal apps built using SharePoint Framework](https://learn.microsoft.com/en-us/sharepoint/dev/spfx/build-for-teams-configure-in-teams#configure-microsoft-teams-personal-apps-built-using-sharepoint-framework?WT.mc_id=M365-MVP-5004617)
 
 ## References
 
