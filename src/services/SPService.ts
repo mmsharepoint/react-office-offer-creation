@@ -21,38 +21,38 @@ export class SPService implements ISPService {
     });
   }
 
-  public async getPersonalSiteUrl(mySiteUrl: string, userLogin: string): Promise<string> {
-    const userLoginEnc = userLogin.replace('.', '_').replace('@', '_'); // user_tenant_onmicrosoft_com
-    const requestUrl: string = `https://${mySiteUrl}/personal/${userLoginEnc}/_api/v2.0/drive/special/approot:/config.json:/content`;
-    const response = await this._spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
-    const jsonResp = await response.json();
-    const siteUrl: string = jsonResp.Value.siteUrl;
-    return siteUrl;
-  }
+  // public async getPersonalSiteUrl(mySiteUrl: string, userLogin: string): Promise<string> {
+  //   const userLoginEnc = userLogin.replace('.', '_').replace('@', '_'); // user_tenant_onmicrosoft_com
+  //   const requestUrl: string = `https://${mySiteUrl}/personal/${userLoginEnc}/_api/v2.0/drive/special/approot:/config.json:/content`;
+  //   const response = await this._spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
+  //   const jsonResp = await response.json();
+  //   const siteUrl: string = jsonResp.Value.siteUrl;
+  //   return siteUrl;
+  // }
 
-  public async storePersonalSiteUrl(mySiteUrl: string, userLogin: string, siteUrl: string): Promise<any> {
-    const userLoginEnc = userLogin.replaceAll('.', '_').replace('@', '_'); // user_tenant_onmicrosoft_com
-    const requestUrl: string = `https://${mySiteUrl}/personal/${userLoginEnc}/_api/v2.0/drive/special/approot:/config.json:/content`;
-    const spOpts : ISPHttpClientOptions  = {
-      headers: {
-        "Content-Type": "text/plain"
-      },
-      body: JSON.stringify({
-        "siteUrl": siteUrl
-      })
-    };
-    const response = await this._spHttpClient.post(requestUrl, SPHttpClient.configurations.v1, spOpts);
-    if (response.status === 204) {
-      return Promise.resolve();
-    }
-    else {
-      return Promise.reject();
-    }
-  }
+  // public async storePersonalSiteUrl(mySiteUrl: string, userLogin: string, siteUrl: string): Promise<any> {
+  //   const userLoginEnc = userLogin.replaceAll('.', '_').replace('@', '_'); // user_tenant_onmicrosoft_com
+  //   const requestUrl: string = `https://${mySiteUrl}/personal/${userLoginEnc}/_api/v2.0/drive/special/approot:/config.json:/content`;
+  //   const spOpts : ISPHttpClientOptions  = {
+  //     headers: {
+  //       "Content-Type": "text/plain"
+  //     },
+  //     body: JSON.stringify({
+  //       "siteUrl": siteUrl
+  //     })
+  //   };
+  //   const response = await this._spHttpClient.post(requestUrl, SPHttpClient.configurations.v1, spOpts);
+  //   if (response.status === 204) {
+  //     return Promise.resolve();
+  //   }
+  //   else {
+  //     return Promise.reject();
+  //   }
+  // }
 
-  public async createOffer(offer: IOffer, siteDomain: string): Promise<any> {
-    this.teamSiteUrl = await this.getSiteUrl(`https://${siteDomain}`);
-    if (this.teamSiteUrl !== "") {
+  public async createOffer(offer: IOffer, siteDomain: string, siteUrl: string): Promise<any> {
+    this.teamSiteUrl = siteUrl !== '' ? siteUrl : await this.getSiteUrl(`https://${siteDomain}`);
+    if (this.teamSiteUrl !== '') {
       this.teamSiteDomain = siteDomain;
       this.teamSiteRelativeUrl = this.teamSiteUrl.split(this.teamSiteDomain)[1];
       const tmplFile = await this.loadTemplate(offer);

@@ -22,7 +22,7 @@
     "description": { "default": "Offer Creation (SPFx) description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "Offer Creation (SPFx)"
+      "siteUrl": ""
     }
   }]
 }

@@ -94,7 +94,7 @@ export default class OfferCreationSpFxWebPart extends BaseClientSideWebPart<IOff
               groupName: strings.BasicGroupName,
               groupFields: [
                 PropertyPaneTextField('siteUrl', {
-                  label: strings.DescriptionFieldLabel
+                  label: strings.SiteUrlFieldLabel
                 })
               ]
             }
