@@ -1,6 +1,7 @@
 import { ServiceKey, ServiceScope } from "@microsoft/sp-core-library";
 import { SPHttpClient, ISPHttpClientOptions } from '@microsoft/sp-http';
 import { IOffer } from "../model/IOffer";
+import GraphService from "./GraphService";
 
 export interface ISPService {
   createOffer(offer: IOffer, siteUrl: string, siteDomain: string): Promise<any>;
@@ -11,6 +12,7 @@ export class SPService implements ISPService {
     ServiceKey.create<SPService>('react-office-create-offer', SPService);
 
   private _spHttpClient: SPHttpClient;
+  private graphServiceInstance: GraphService;
   private teamSiteUrl: string;
   private teamSiteDomain: string;
   private teamSiteRelativeUrl: string;
@@ -18,6 +20,7 @@ export class SPService implements ISPService {
   constructor(serviceScope: ServiceScope) {  
     serviceScope.whenFinished(() => {
       this._spHttpClient = serviceScope.consume(SPHttpClient.serviceKey);
+      this.graphServiceInstance = serviceScope.consume(GraphService.serviceKey);
     });
   }
 
@@ -51,7 +54,18 @@ export class SPService implements ISPService {
   // }
 
   public async createOffer(offer: IOffer, siteDomain: string, siteUrl: string): Promise<any> {
-    this.teamSiteUrl = siteUrl !== '' ? siteUrl : await this.getSiteUrl(`https://${siteDomain}`);
+    if (siteUrl !== '') { // Run and configured in SharePoint
+      this.teamSiteUrl = siteUrl;
+    }
+    else { // Running in M365 (Teams, Office, Outlook)
+      const personalSiteUrl = await this.graphServiceInstance.getPersonalSiteUrl();
+      if (personalSiteUrl !== '') { // Configured personally
+        this.teamSiteUrl = personalSiteUrl;
+      }
+      else { // Configured tenant-wide
+        this.teamSiteUrl = await this.getSiteUrl(`https://${siteDomain}`);
+      }
+    }
     if (this.teamSiteUrl !== '') {
       this.teamSiteDomain = siteDomain;
       this.teamSiteRelativeUrl = this.teamSiteUrl.split(this.teamSiteDomain)[1];

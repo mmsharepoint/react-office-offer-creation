@@ -23,8 +23,8 @@ export const OfferCreationSpFx: React.FC<IOfferCreationSpFxProps> = (props) => {
       setOfferFileUrl(resp.fileUrl);
     })
     .catch((error) => {
-        console.log(error);
-        setShowSpinner(false);
+      console.log(error);
+      setShowSpinner(false);
     });
   };
 

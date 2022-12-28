@@ -1,5 +1,5 @@
 import { ServiceKey, ServiceScope } from "@microsoft/sp-core-library";
-import { MSGraphClientFactory, MSGraphClientV3, HttpClient } from "@microsoft/sp-http";
+import { MSGraphClientFactory, MSGraphClientV3 } from "@microsoft/sp-http";
 
 export default class GraphService {
 	private msGraphClientFactory: MSGraphClientFactory;
@@ -13,13 +13,13 @@ export default class GraphService {
     });
   }
 
-  public async getPersonalSiteUrl(httpClient: HttpClient): Promise<string> {
+  public async getPersonalSiteUrl(): Promise<string> {
     const downloadUrl = await this.getDownloadUrl();
-    const siteUrl = await this.getSiteUrl(httpClient, downloadUrl);        
+    const siteUrl = await this.getSiteUrl(downloadUrl);        
     return siteUrl;
   }
 
-  public async storePersonalSiteUrl(siteUrl: string) {
+  public async storePersonalSiteUrl(siteUrl: string): Promise<void> {
     const settings = { siteUrl: siteUrl };
     return this.msGraphClientFactory.getClient('3').then((client: MSGraphClientV3) => {
       client
@@ -40,8 +40,7 @@ export default class GraphService {
     return Promise.resolve(downloadUrl);
   }
 
-  private async getSiteUrl(httpClient: HttpClient, downloadUrl: string): Promise<string> {
-    
+  private async getSiteUrl(downloadUrl: string): Promise<string> {    
     return fetch(downloadUrl)
       .then(async (response) => {
         const httpResp = await response.json();

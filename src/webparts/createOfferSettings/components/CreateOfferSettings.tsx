@@ -11,21 +11,15 @@ export const CreateOfferSettings: React.FC<ICreateOfferSettingsProps> = (props) 
 
   const storeData = useCallback(() => {
     const graphServiceInstance = props.serviceScope.consume(GraphService.serviceKey);
-
-    graphServiceInstance.storePersonalSiteUrl(siteUrl).then((resp: any) => {
-      console.log(resp);
-
-      
-    })
+    graphServiceInstance.storePersonalSiteUrl(siteUrl)
     .catch((error) => {
       console.log(error);
-
     });
   }, [siteUrl]);
 
   useEffect((): void => {
     const graphServiceInstance = props.serviceScope.consume(GraphService.serviceKey);
-    graphServiceInstance.getPersonalSiteUrl(props.httpClient)
+    graphServiceInstance.getPersonalSiteUrl()
       .then(response => {
         setSiteUrl(response);
       });

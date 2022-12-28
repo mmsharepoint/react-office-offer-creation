@@ -12,6 +12,8 @@ Create Offer form with FluentUI controls
 
 ![Create Offer form with FluentUI controls](assets/15CreateOfferForm_FluentUI_SPFx.png)
 
+For further details see the author's [blog series](https://mmsharepoint.wordpress.com/2022/12/28/a-sharepoint-document-generator-as-microsoft-365-app-ii-spfx/)
+
 ## Used SharePoint Framework Version
 
 ![version](https://img.shields.io/badge/version-1.16.1-green.svg)
@@ -23,16 +25,12 @@ Create Offer form with FluentUI controls
 
 > Get your own free development tenant by subscribing to [Microsoft 365 developer program](http://aka.ms/o365devprogram)
 
-## Prerequisites
-
-> Any special pre-requisites?
-
 
 ## Version history
 
 Version|Date|Author|Comments
 -------|----|----|--------
-1.0|Dec xx, 2022|[Markus Moeller](https://twitter.com/moeller2_0)|Initial release
+1.0|Dec 28, 2022|[Markus Moeller](https://twitter.com/moeller2_0)|Initial release
 
 ## Disclaimer
 
