@@ -12,6 +12,10 @@ Create Offer form with FluentUI controls
 
 ![Create Offer form with FluentUI controls](assets/15CreateOfferForm_FluentUI_SPFx.png)
 
+Configuration settings form to set Site Url (Offer location)
+
+![Configuration settings form to set Site Url](assets/19TeamsSPFxConfigForm.png)
+
 For further details see the author's [blog series](https://mmsharepoint.wordpress.com/2022/12/28/a-sharepoint-document-generator-as-microsoft-365-app-ii-spfx/)
 
 ## Used SharePoint Framework Version
