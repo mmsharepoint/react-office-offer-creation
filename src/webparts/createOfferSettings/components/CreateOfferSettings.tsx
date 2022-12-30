@@ -28,21 +28,27 @@ export const CreateOfferSettings: React.FC<ICreateOfferSettingsProps> = (props) 
 
   return (
     <section className={`${styles.createOfferSettings} ${props.hasTeamsContext ? styles.teams : ''}`}>
-      <div className={styles.welcome}>
-        <h2>Configuration</h2>
+      <div className={styles.form}>
+        <div className={`${styles.welcome} ${styles.formField}`}>
+          <h2>Configuration</h2>
+        </div>
       </div>
-      <div>
-        <TextField label="Offer Site Url" 
-                value={siteUrl}
-                type="text" 
-                onChange={(e, data) => {
-                  if (data) {
-                    setSiteUrl(data);
-                  }
-                }} />  
+      <div className={styles.form}>
+        <div className={styles.formField}>
+          <TextField label="Offer Site Url" 
+                  value={siteUrl}
+                  type="text" 
+                  onChange={(e, data) => {
+                    if (data) {
+                      setSiteUrl(data);
+                    }
+                  }} />
+        </div>
       </div>
-      <div>
-        <PrimaryButton text='Save' onClick={storeData} />
+      <div className={styles.form}>
+        <div className={styles.formField}>
+          <PrimaryButton text='Save' onClick={storeData} />
+        </div>
       </div>
     </section>
   );

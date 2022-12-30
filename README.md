@@ -12,6 +12,10 @@ Create Offer form with FluentUI controls
 
 ![Create Offer form with FluentUI controls](assets/15CreateOfferForm_FluentUI_SPFx.png)
 
+Create Offer form with FluentUI controls opened in Microsoft 365
+
+![Create Offer form with FluentUI controls opened in Microsoft 365](assets/22CreateOfferForm_FluentUI_SPFx_InM365.png)
+
 Configuration settings form to set Site Url (Offer location)
 
 ![Configuration settings form to set Site Url](assets/19TeamsSPFxConfigForm.png)
