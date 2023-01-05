@@ -16,6 +16,10 @@ Create Offer form with FluentUI controls opened in Microsoft 365
 
 ![Create Offer form with FluentUI controls opened in Microsoft 365](assets/22CreateOfferForm_FluentUI_SPFx_InM365.png)
 
+Created Offer with filled metadata opened 1in Word
+
+![Created Offer with filled metadata opened 1in Word](assets/23OfferInWord.png)
+
 Configuration settings form to set Site Url (Offer location)
 
 ![Configuration settings form to set Site Url](assets/19TeamsSPFxConfigForm.png)

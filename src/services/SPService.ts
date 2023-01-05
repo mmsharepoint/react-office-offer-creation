@@ -4,7 +4,18 @@ import { IOffer } from "../model/IOffer";
 import GraphService from "./GraphService";
 
 export interface ISPService {
-  createOffer(offer: IOffer, siteUrl: string, siteDomain: string): Promise<any>;
+  createOffer(offer: IOffer, siteUrl: string, siteDomain: string): Promise<string>;
+}
+
+interface IFile {
+  data: ArrayBuffer,
+  name: string;
+  size: number;
+}
+
+interface IFileItem {
+  id: string;
+  type: string;
 }
 
 export class SPService implements ISPService {
@@ -24,36 +35,7 @@ export class SPService implements ISPService {
     });
   }
 
-  // public async getPersonalSiteUrl(mySiteUrl: string, userLogin: string): Promise<string> {
-  //   const userLoginEnc = userLogin.replace('.', '_').replace('@', '_'); // user_tenant_onmicrosoft_com
-  //   const requestUrl: string = `https://${mySiteUrl}/personal/${userLoginEnc}/_api/v2.0/drive/special/approot:/config.json:/content`;
-  //   const response = await this._spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
-  //   const jsonResp = await response.json();
-  //   const siteUrl: string = jsonResp.Value.siteUrl;
-  //   return siteUrl;
-  // }
-
-  // public async storePersonalSiteUrl(mySiteUrl: string, userLogin: string, siteUrl: string): Promise<any> {
-  //   const userLoginEnc = userLogin.replaceAll('.', '_').replace('@', '_'); // user_tenant_onmicrosoft_com
-  //   const requestUrl: string = `https://${mySiteUrl}/personal/${userLoginEnc}/_api/v2.0/drive/special/approot:/config.json:/content`;
-  //   const spOpts : ISPHttpClientOptions  = {
-  //     headers: {
-  //       "Content-Type": "text/plain"
-  //     },
-  //     body: JSON.stringify({
-  //       "siteUrl": siteUrl
-  //     })
-  //   };
-  //   const response = await this._spHttpClient.post(requestUrl, SPHttpClient.configurations.v1, spOpts);
-  //   if (response.status === 204) {
-  //     return Promise.resolve();
-  //   }
-  //   else {
-  //     return Promise.reject();
-  //   }
-  // }
-
-  public async createOffer(offer: IOffer, siteDomain: string, siteUrl: string): Promise<any> {
+  public async createOffer(offer: IOffer, siteDomain: string, siteUrl: string): Promise<string> {
     if (siteUrl !== '') { // Run and configured in SharePoint
       this.teamSiteUrl = siteUrl;
     }
@@ -70,11 +52,11 @@ export class SPService implements ISPService {
       this.teamSiteDomain = siteDomain;
       this.teamSiteRelativeUrl = this.teamSiteUrl.split(this.teamSiteDomain)[1];
       const tmplFile = await this.loadTemplate(offer);
-      const newFile = await this.createOfferFile(tmplFile);
-      const newFileUrl = `https://${this.teamSiteDomain}${newFile.ServerRelativeUrl}`;
+      const newFileRelativeUrl: string = await this.createOfferFile(tmplFile);
+      const newFileUrl = `https://${this.teamSiteDomain}${newFileRelativeUrl}`;
       const fileListItemInfo = await this.getFileListItem(tmplFile.name);    
       await this.updateFileListItem(fileListItemInfo.id, fileListItemInfo.type, offer);
-      return Promise.resolve({ item: fileListItemInfo, fileUrl: newFileUrl });
+      return Promise.resolve(newFileUrl);
     }
     return Promise.reject();
   }
@@ -94,39 +76,39 @@ export class SPService implements ISPService {
     return "";
   }
 
-  private async loadTemplate (offer: IOffer): Promise<any> {
+  private async loadTemplate (offer: IOffer): Promise<IFile> {
     const requestUrl: string = `${this.teamSiteUrl}/_api/web/GetFileByServerRelativeUrl('${this.teamSiteRelativeUrl}/_cts/Offering/Offering.dotx')/OpenBinaryStream()`;
     const response = await this._spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
-    const fileBlob = await response.blob();
-    const respFile = { data: fileBlob.arrayBuffer, name: `${offer.title}.docx`, size: fileBlob.size };
+    const fileBlob = await response.arrayBuffer();
+    const respFile = { data: fileBlob, name: `${offer.title}.docx`, size: fileBlob.byteLength };
     return respFile;
   }
 
-  private async createOfferFile(tmplFile: any): Promise<any> {
+  private async createOfferFile(tmplFile: IFile): Promise<string> {
     const uploadUrl = `${this.teamSiteUrl}/_api/web/GetFolderByServerRelativeUrl('${this.teamSiteRelativeUrl}/Shared Documents')/files/add(overwrite=true,url='${tmplFile.name}')` ;
 
     const spOpts : ISPHttpClientOptions  = {
       headers: {
         "Accept": "application/json",
-        "Content-Length": tmplFile.size,
-        "Content-Type": "application/json"
+        "Content-Length": tmplFile.size.toString(),
+        "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       },
       body: tmplFile.data        
     };
     const response = await this._spHttpClient.post(uploadUrl, SPHttpClient.configurations.v1, spOpts);
     const jsonResp = await response.json();
-    return jsonResp;
+    return jsonResp.ServerRelativeUrl;
   }
 
-  private async getFileListItem(fileName: string): Promise<any> {
+  private async getFileListItem(fileName: string): Promise<IFileItem> {
     const requestUrl = `${this.teamSiteUrl}/_api/web/GetFileByServerRelativeUrl('${this.teamSiteRelativeUrl}/Shared Documents/${fileName}')/ListItemAllFields`;
     const response = await this._spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
     const jsonResp = await response.json();
     const itemID = jsonResp.ID;
-    return { id: itemID, type: jsonResp["@odata.type"].replace('#', '') }; // ToDo: ServerRedirectedEmbedUri  
+    return { id: itemID, type: jsonResp["@odata.type"].replace('#', '') }; 
   }
 
-  private async updateFileListItem(itemID: string, itemType: string, offer: IOffer): Promise<any> {
+  private async updateFileListItem(itemID: string, itemType: string, offer: IOffer): Promise<void> {
     const requestUrl = `${this.teamSiteUrl}/_api/web/lists/GetByTitle('Documents')/items(${itemID})`;
     const spOpts : ISPHttpClientOptions  = {
       headers: {

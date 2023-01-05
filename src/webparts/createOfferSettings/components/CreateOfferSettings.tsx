@@ -22,6 +22,9 @@ export const CreateOfferSettings: React.FC<ICreateOfferSettingsProps> = (props) 
     graphServiceInstance.getPersonalSiteUrl()
       .then(response => {
         setSiteUrl(response);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }, []);
 

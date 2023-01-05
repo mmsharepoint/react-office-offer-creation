@@ -50,17 +50,5 @@ export default class GraphService {
         console.log(error);
         return "";
       });
-    // return httpClient
-    //             .get(downloadUrl, HttpClient.configurations.v1)
-    //             .then(async (httpResp: HttpClientResponse): Promise<string> => {
-    //               if (httpResp.ok) {
-    //                 const siteUrl = await httpResp.text();
-    //                 return siteUrl;
-    //               }
-    //             })
-    //             .catch(error => {
-    //               console.log(error);
-    //               return "";
-    //             });
   }
 }
